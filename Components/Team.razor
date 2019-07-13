@@ -1,0 +1,50 @@
+@inherits BlazorStateComponent
+@inject GlobalAppState GlobalAppState
+
+@if (AppState.Employee != null && TeamList.Count() > 0)
+{
+    <div class="card m-2">
+        <div class="card-header">
+            Team
+        </div>
+        <div class="card-body">
+            <div class="row">
+                @foreach (var member in TeamList)
+                {
+                    <div class="card m-2">
+                        <div class=@HeaderStyle(member)>
+                            @member.F0601161_ALPH
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    Number
+                                </div>
+                                <div class="col">
+                                    @member.F0601161_AN8
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+
+    protected string HeaderStyle(F0601161Row row) => $"card-header {(row.Connected ? "bg-success" : "")}";
+
+    protected AppState AppState => GetState<AppState>();
+
+    protected IEnumerable<F0601161Row> TeamList
+    {
+        get
+        {
+            return GlobalAppState.Employees
+                .Where(e => e.F0601161_ANPA == AppState.Employee.F0601161_AN8);
+        }
+    }
+
+}

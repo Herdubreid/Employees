@@ -1,0 +1,59 @@
+@inherits BlazorStateComponent
+@implements IDisposable
+@inject IJSRuntime jsRuntime
+
+<Employees.Components.Peers></Employees.Components.Peers>
+<Employees.Components.Team></Employees.Components.Team>
+
+<div class="toast-container">
+    @if (AppState != null)
+    {
+        @foreach (var toast in AppState.ToastItems)
+        {
+            <Employees.Components.Toast Item=@toast></Employees.Components.Toast>
+        }
+    }
+</div>
+
+<button @onclick=@Refresh type="button" class="btn btn-primary">Refresh</button>
+
+@code {
+
+    protected AppState AppState => GetState<AppState>();
+
+    protected void Refresh() => StateHasChanged();
+
+    protected ChatClient ChatClient { get; set; }
+
+    protected void MessageReceived(object sender, MessageReceivedEventArgs e)
+    {
+        Mediator.Send(new AddToastAction { Header = e.Username, Body = e.Message });
+    }
+
+    async protected override Task OnInitAsync()
+    {
+        await base.OnInitAsync();
+        try
+        {
+            ChatClient = new ChatClient(AppState.Employee.F0601161_AN8, AppState.Employee.F0601161_ALPH, jsRuntime);
+            ChatClient.MessageReceived += MessageReceived;
+            await ChatClient.Start();
+        }
+        catch
+        {
+        }
+    }
+
+    async new public void Dispose()
+    {
+        if (ChatClient != null)
+        {
+            await ChatClient.Stop();
+            ChatClient.Dispose();
+            ChatClient = null;
+            base.Dispose();
+        }
+        base.Dispose();
+    }
+
+}

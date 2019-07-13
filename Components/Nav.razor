@@ -1,0 +1,27 @@
+@inherits BlazorStateComponent
+
+@if (AppState.Employee == null)
+{
+    <div class="col">
+    </div>
+}
+else
+{
+    <div class="col-auto">
+        <button type="button" class="btn btn-outline-warning" @onclick=@LogOut><span class="oi oi-account-logout"></span></button>
+    </div>
+    <div class="col">
+        Welcome, @AppState.Employee.F0601161_ALPH (@AppState.Employee.F0601161_AN8)
+    </div>
+}
+<a class="home col-auto btn p-0" target="_blank" href="http://e1p-templates.celin.io"
+   data-toogle="tooltip" data-placement="left" title="Visit Celin's Page Gallery">
+    <img src="./images/celin.png">
+</a>
+
+@code {
+
+    protected AppState AppState => GetState<AppState>();
+
+protected void LogOut() => Mediator.Send(new LogOutAction());
+}

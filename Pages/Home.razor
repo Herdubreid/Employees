@@ -1,0 +1,19 @@
+@page "/"
+@inherits BlazorStateComponent
+@inject IJSRuntime jsRuntime
+
+<AuthorizeView>
+    <Authorized>
+        <Employees.Components.Chat></Employees.Components.Chat>
+    </Authorized>
+    <Authorizing>
+        <p><em>Loading...</em></p>
+    </Authorizing>
+    <NotAuthorized>
+        <Employees.Components.Login></Employees.Components.Login>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+}

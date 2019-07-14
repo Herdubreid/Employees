@@ -31,7 +31,7 @@ namespace Employees.Hubs
         /// This method is called from Javascript when amessage is received
         /// </remarks>
         [JSInvokable]
-        public static void ReceiveMessage(string key, string method, int userId, string username, string message)
+        public static void ReceiveMessage(string key, string method, long messageId, int userId, string username, string message)
         {
             if (_clients.ContainsKey(key))
             {
@@ -39,7 +39,7 @@ namespace Employees.Hubs
                 switch (method)
                 {
                     case "ReceiveMessage":
-                        client.HandleReceiveMessage(userId, username, message);
+                        client.HandleReceiveMessage(messageId, userId, username, message);
                         return;
 
                     default:
@@ -126,10 +126,10 @@ namespace Employees.Hubs
         /// </summary>
         /// <param name="method">event name</param>
         /// <param name="message">message content</param>
-        private void HandleReceiveMessage(int userId, string username, string message)
+        private void HandleReceiveMessage(long messageId, int userId, string username, string message)
         {
             // raise an event to subscribers
-            MessageReceived?.Invoke(this, new MessageReceivedEventArgs(userId, username, message));
+            MessageReceived?.Invoke(this, new MessageReceivedEventArgs(messageId, userId, username, message));
         }
 
         /// <summary>
@@ -199,13 +199,15 @@ namespace Employees.Hubs
     /// </summary>
     public class MessageReceivedEventArgs : EventArgs
     {
-        public MessageReceivedEventArgs(int id, string username, string message)
+        public MessageReceivedEventArgs(long messageId, int userId, string username, string message)
         {
-            UserId = id;
+            MessageId = messageId;
+            UserId = userId;
             Username = username;
             Message = message;
         }
 
+        public long MessageId { get; set; }
         public int UserId { get; set; }
 
         /// <summary>

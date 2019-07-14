@@ -17,8 +17,12 @@
               asp-fallback-href="css/bootstrap/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
               crossorigin="anonymous"
-              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"/>
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" />
     </environment>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="script" href="serviceworker.js" />
+    <link rel="apple-touch-icon" href="~/icons/icon-192x192.png" />
+    <meta name="theme-color" content="#052767" />
     <link href="css/site.css" rel="stylesheet" />
 </head>
 <body>
@@ -26,5 +30,14 @@
 
     <script src="~/js/main.bundle.js"></script>
     <script src="_framework/blazor.server.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            console.log('Registering service worker now');
+            navigator.serviceWorker.register('/serviceworker.js')
+                .then(function () {
+                    console.log('Service Worker Registered!');
+                });
+        }
+    </script>
 </body>
 </html>

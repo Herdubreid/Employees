@@ -11,7 +11,9 @@ namespace Employees.Hubs
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public List<string> Groups { get; set; }
     }
+
     /// <summary>
     /// The SignalR hub 
     /// </summary>
@@ -24,6 +26,21 @@ namespace Employees.Hubs
 
         protected GlobalAppState GlobalAppState { get; set; }
 
+        protected static long MessageId { get; set; } = 0;
+
+        protected string[] GetGroups(int userId)
+        {
+            var employee = GlobalAppState.Employees
+                .Find(e => e.F0601161_AN8 == userId);
+            var team = GlobalAppState.Employees
+                .Where(e => e.F0601161_ANPA == userId)
+                .Count();
+            if (team > 0)
+            {
+                return new string[] { employee.F0601161_ANPA.ToString(), employee.F0601161_AN8.ToString() };
+            }
+            return new string[] { employee.F0601161_ANPA.ToString() };
+        }
         /// <summary>
         /// connectionId-to-username lookup
         /// </summary>
@@ -38,9 +55,12 @@ namespace Employees.Hubs
         /// <param name="username"></param>
         /// <param name="message"></param>
         /// <returns></returns>
-        public async Task SendMessage(string username, string message)
+        public async Task SendMessage(int userId, string username, string message)
         {
-            await Clients.All.SendAsync("ReceiveMessage", username, message);
+            var user = userLookup[Context.ConnectionId];
+            await Clients
+                .Groups(user.Groups)
+                .SendAsync("ReceiveMessage", ++MessageId, userId, username, message);
         }
 
         /// <summary>
@@ -53,10 +73,15 @@ namespace Employees.Hubs
             var currentId = Context.ConnectionId;
             if (!userLookup.ContainsKey(currentId))
             {
+                var groups = new List<string>(GetGroups(userId));
                 // maintain a lookup of connectionId-to-username
-                userLookup.Add(currentId, new User { Id = userId, Name = userName });
+                userLookup.Add(currentId, new User { Id = userId, Name = userName, Groups = groups });
                 // re-use existing message for now
-                await Clients.AllExcept(currentId).SendAsync("ReceiveMessage", userId, userName, $"{userName} joined the chat");
+                //await Clients.AllExcept(currentId).SendAsync("ReceiveMessage", userId, userName, $"{userName} joined the chat");
+                groups.ForEach(async g => await Groups.AddToGroupAsync(currentId, g));
+                await Clients
+                    .Groups(groups)
+                    .SendAsync("ReceiveMessage", ++MessageId, userId, userName, $"{userName} joined the chat");
             }
         }
 
@@ -85,7 +110,10 @@ namespace Employees.Hubs
                     .Find(ab => ab.F0601161_AN8 == user.Id)
                     .Connected = false;
                 userLookup.Remove(id);
-                await Clients.AllExcept(Context.ConnectionId).SendAsync("ReceiveMessage", user.Id, user.Name, $"{user.Name} has left the chat");
+                await Clients
+                    .Groups(user.Groups)
+                    //.AllExcept(Context.ConnectionId)
+                    .SendAsync("ReceiveMessage", ++MessageId, user.Id, user.Name, $"{user.Name} has left the chat");
             }
             await base.OnDisconnectedAsync(e);
         }

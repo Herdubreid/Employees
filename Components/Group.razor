@@ -1,0 +1,44 @@
+
+@if (List != null && List.Count() > 0)
+{
+    <div class="card m-2">
+        <div class="card-header">
+            @Title
+        </div>
+        <div class="card-body">
+            <div class="row">
+                @foreach (var member in List)
+                {
+                    <div class="card m-2">
+                        <div class=@HeaderStyle(member)>
+                            @member.F0601161_ALPH
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    Number
+                                </div>
+                                <div class="col">
+                                    @member.F0601161_AN8
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    protected string Title { get; set; }
+
+    [Parameter]
+    protected IEnumerable<F0601161Row> List { get; set; }
+
+    protected string HeaderStyle(F0601161Row row) => $"card-header {(row.Connected ? "bg-success" : "")}";
+
+}

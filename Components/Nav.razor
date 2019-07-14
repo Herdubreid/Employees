@@ -1,27 +1,34 @@
 @inherits BlazorStateComponent
+@inject  IJSRuntime jsRuntime
 
-@if (AppState.Employee == null)
-{
-    <div class="col">
-    </div>
-}
-else
-{
-    <div class="col-auto">
-        <button type="button" class="btn btn-outline-warning" @onclick=@LogOut><span class="oi oi-account-logout"></span></button>
-    </div>
-    <div class="col">
-        Welcome, @AppState.Employee.F0601161_ALPH (@AppState.Employee.F0601161_AN8)
-    </div>
-}
-<a class="home col-auto btn p-0" target="_blank" href="http://e1p-templates.celin.io"
-   data-toogle="tooltip" data-placement="left" title="Visit Celin's Page Gallery">
-    <img src="./images/celin.png">
-</a>
+<div class=@Style>
+    @if (AppState.Employee == null)
+    {
+        <div class="col">
+        </div>
+    }
+    else
+    {
+        <div class="col-auto">
+            <button type="button" class="btn btn-warning" @onclick=@LogOut><span class="oi oi-account-logout"></span></button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#sendMessage"><span class="oi oi-chat"></span></button>
+        </div>
+        <div class="col">
+            Welcome, @AppState.Employee.F0601161_ALPH (@AppState.Employee.F0601161_AN8)
+        </div>
+    }
+    <a class="home col-auto btn p-0" target="_blank" href="http://e1p-templates.celin.io"
+       data-toogle="tooltip" data-placement="left" title="Visit Celin's Page Gallery">
+        <img src="~/icons/icon-192x192.png">
+    </a>
+</div>
 
 @code {
 
-    protected AppState AppState => GetState<AppState>();
+protected string Style => $"navbar navbar-expand border-bottom fixed-top {(AppState.Employee == null ? "bg-light" : "bg-success")}";
+
+protected AppState AppState => GetState<AppState>();
 
 protected void LogOut() => Mediator.Send(new LogOutAction());
+
 }

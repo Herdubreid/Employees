@@ -25,4 +25,8 @@
     <ProjectReference Include="..\Celin.AIS\Celin.AIS.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\icons\" />
+  </ItemGroup>
+
 </Project>

@@ -2,22 +2,19 @@
 console.log("This is service worker talking");
 var cacheName = 'io-celin-employees-chat';
 var filesToCache = [
+    '/_framework/blazor.server.js',
     '/css/site.css',
     '/css/bootstrap/bootstrap.min.css',
     '/css/open-iconic/font/css/open-iconic-bootstrap.min.css',
-    '/open-iconic',
-    '/css/open-iconic/font/fonts/open-iconic.woff',
-    //Blazor framework
-    '/_framework/blazor.server.js',
-    '/_framework/blazor.boot.json',
     //Our additional files
     '/manifest.json',
     '/serviceworker.js',
     '/icons/icon-192x192.png',
     '/icons/icon-512x512.png',
+    // JS
+    '/js/main-bundle.js',
     //Pages
-    '/index',
-    '/ablist'
+    '/index'
 ];
 
 self.addEventListener('install', function (e) {

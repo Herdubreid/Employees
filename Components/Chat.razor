@@ -73,6 +73,7 @@
         if (Message != string.Empty)
         {
             await ChatClient.Send(Message);
+            Message = string.Empty;
         }
     }
 

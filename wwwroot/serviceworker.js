@@ -12,7 +12,7 @@ var filesToCache = [
     '/icons/icon-192x192.png',
     '/icons/icon-512x512.png',
     // JS
-    '/js/main-bundle.js',
+    '/js/main.bundle.js',
     //Pages
     '/index'
 ];
